@@ -2,28 +2,36 @@ package main
 
 import (
 	"fmt"
-	"github.com/dklassen/presto_metrico"
-	"github.com/ooyala/go-dogstatsd"
-	"github.com/pborman/getopt"
 	"log"
 	"os"
 	"time"
+
+	"github.com/dklassen/presto_metrico"
+	"github.com/ooyala/go-dogstatsd"
+	"github.com/pborman/getopt"
 )
 
 var (
-	usage = fmt.Sprintf(`NAME
-	Presto Metrico  - Presto metrics and information thing
-OPTIONS:
- -server
-  The coordinator node we are going to pull metrics from
-`, os.Args[0])
+	usage = fmt.Sprintf(`
+	Presto Metrico  - Collect and send Presto Metrics to datadog
 
-	commandOptions = getopt.New()
-	servername     = commandOptions.StringLong("server", 's', "defval", "Address of the Presto coordinator")
+	OPTIONS:
+ -s
+ The coordinator node we are going to pull metrics from
+ -d
+ The uri for the statsd client. Defaults to 127.0.0.1:8125
+ -t
+ The time in secs between sending metrics
+`)
+
+	commandOptions      = getopt.New()
+	coordinatorOpts     = commandOptions.StringLong("coordinator", 'c', "", "Address of the Presto coordinator")
+	dogstatsdServerOpts = commandOptions.StringLong("dogstatsd", 'd', "127.0.0.1:8125", "Address for the statsd server")
+	metricsIntervalOpts = commandOptions.IntLong("timer", 't', 15, "Time in seconds to trigger timer to send metrics")
 )
 
 func printHelp() {
-	log.Println(os.Stderr, usage)
+	log.Println(usage)
 	os.Exit(0)
 }
 
@@ -33,18 +41,20 @@ func main() {
 	}
 
 	commandOptions.Parse(os.Args)
-	presto_metrico.Configure(*servername)
-
+	os.Setenv("PRESTO_COORDINATOR", *coordinatorOpts)
 	log.Println("Starting Presto Metrico")
-	client, err := dogstatsd.New("127.0.0.1:8125")
+
+	client, err := dogstatsd.New(*dogstatsdServerOpts)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	t := time.NewTicker(10 * time.Second)
+	seconds := time.Duration(*metricsIntervalOpts)
+
+	t := time.NewTicker(seconds * time.Second)
 	for now := range t.C {
 		log.Println("Sending metrics: ", now)
-		presto_metrico.SendJMXMetrics(client)
+		prestometrico.ProcessJMXMetrics(client)
 	}
 }
