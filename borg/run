@@ -1,0 +1,5 @@
+#!/bin/bash
+export ENV="production"
+
+exec /artifacts/presto_metrico\
+       -c ${PRESTO_COORDINATOR} \
