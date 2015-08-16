@@ -1,0 +1,10 @@
+{
+	"ImportPath": "github.com/dklassen/presto_metrico",
+	"GoVersion": "go1.4.2",
+	"Deps": [
+		{
+			"ImportPath": "github.com/ooyala/go-dogstatsd",
+			"Rev": "23f2a1659b0203cd76910e56cd4e6394f14a5cbb"
+		}
+	]
+}
