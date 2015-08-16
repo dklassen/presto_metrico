@@ -1,4 +1,4 @@
-package prestometrico
+package main
 
 import (
 	"os"
