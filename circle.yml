@@ -1,0 +1,7 @@
+dependencies:
+  override:
+    - script/setup
+
+test:
+  override:
+    - script/test

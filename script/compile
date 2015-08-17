@@ -10,4 +10,5 @@ target="${root_path}/presto_metrico"
 go fmt .
 go vet .
 
+script/setup
 godep go build -o "${target}"

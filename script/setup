@@ -1,2 +1,2 @@
 #!/bin/bash
-godep go build -v
+go get github.com/tools/godep

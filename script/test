@@ -1,0 +1,1 @@
+godep go test -v
