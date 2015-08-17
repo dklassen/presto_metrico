@@ -15,7 +15,7 @@ var (
 	Presto Metrico  - Collect and send Presto Metrics to datadog
 
 	OPTIONS:
- -s
+ -c
  The coordinator node we are going to pull metrics from
  -d
  The uri for the statsd client. Defaults to 127.0.0.1:8125
