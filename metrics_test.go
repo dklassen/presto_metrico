@@ -11,7 +11,6 @@ func TestMain(m *testing.M) {
 }
 
 func Setup() {
-	jmxSuffix = "/blerg"
 	os.Setenv("PRESTO_COORDINATOR", "testomcpresto")
 	jmxBeans = map[string]string{"woot_zone": "this_is_a_test"}
 }
@@ -26,7 +25,7 @@ func TestBuildMetricUri(t *testing.T) {
 
 func TestGetCoordinatorURIIsSetFromEnvironment(t *testing.T) {
 	coordinatorURI := getCoordinatorURI()
-	if coordinatorURI != "testomcpresto/blerg" {
-		t.Error("Expected bloop, got", coordinatorURI)
+	if coordinatorURI != "testomcpresto/v1/jmx/mbean/" {
+		t.Error("Expected testomcpresto/v1/jmx/mbean/, got", coordinatorURI)
 	}
 }
