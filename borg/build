@@ -10,4 +10,5 @@ else
   artifacts_path="${source_path}"
 fi
 
-godep go build -o "${artifacts_path}/${binary}"
+script/compile
+mv "${binary}" "${artifacts_path}/${binary}"

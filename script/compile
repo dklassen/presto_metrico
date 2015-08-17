@@ -1,0 +1,13 @@
+set -xeuo pipefail
+
+function abs_path {
+  (cd "$(dirname '$1')" &>/dev/null && echo $(pwd))
+}
+
+root_path="$(abs_path "$(dirname "${BASH_SOURCE[0]}")")"
+target="${root_path}/presto_metrico"
+
+go fmt .
+go vet .
+
+godep go build -o "${target}"
