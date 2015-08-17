@@ -5,6 +5,10 @@
 		{
 			"ImportPath": "github.com/ooyala/go-dogstatsd",
 			"Rev": "23f2a1659b0203cd76910e56cd4e6394f14a5cbb"
+		},
+		{
+			"ImportPath": "github.com/pborman/getopt",
+			"Rev": "3b137f113d82e0851ddf701b7c6dde5e58d417f2"
 		}
 	]
 }
