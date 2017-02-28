@@ -145,7 +145,7 @@ var (
 // a specific attribute of a jmx metric
 type JMXMetricAttribute struct {
 	Name  string
-	Value interface{}
+	Value float64
 }
 
 // JMXMetric represents the top level jmx metric.
@@ -194,13 +194,13 @@ func retriveRawMetricResponse(metricName string) (*http.Response, error) {
 	return resp, err
 }
 
-func decodeRawMetricResponse(resp *http.Response) (JMXMetric, error) {
+func decodeRawMetricResponse(resp *http.Response) (*JMXMetric, error) {
 	defer resp.Body.Close()
 
 	decoder := json.NewDecoder(resp.Body)
 	var jmxMetric JMXMetric
 	err := decoder.Decode(&jmxMetric)
-	return jmxMetric, err
+	return &jmxMetric, err
 }
 
 func getMetric(metricName string) (*JMXMetric, error) {
@@ -210,15 +210,14 @@ func getMetric(metricName string) (*JMXMetric, error) {
 		return nil, err
 	}
 
-	jmxMetric, err := decodeRawMetricResponse(resp)
-	return &jmxMetric, err
+	return decodeRawMetricResponse(resp)
 }
 
 func sendJMXMetric(client *dogstatsd.Client, metricCatagory string, attribute JMXMetricAttribute) {
 	_, ok := datadogMetrics[attribute.Name]
 	if ok {
 		datadogLabel := fmt.Sprintf("data.presto.%s.%s", metricCatagory, attribute.Name)
-		client.Gauge(datadogLabel, attribute.Value.(float64), nil, 1.0)
+		client.Gauge(datadogLabel, attribute.Value, nil, 1.0)
 	}
 }
 
@@ -229,7 +228,7 @@ func ProcessJMXMetrics(client *dogstatsd.Client) {
 		metric, err := getMetric(metricName)
 
 		if err != nil {
-			log.Println(err)
+			log.Printf("getMetric(%q): %v", err)
 			continue
 		}
 
