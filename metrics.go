@@ -228,7 +228,7 @@ func ProcessJMXMetrics(client *dogstatsd.Client) {
 		metric, err := getMetric(metricName)
 
 		if err != nil {
-			log.Printf("getMetric(%q): %v", err)
+			log.Printf("getMetric(%q): %v", metricName, err)
 			continue
 		}
 
