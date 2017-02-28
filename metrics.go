@@ -145,7 +145,7 @@ var (
 // a specific attribute of a jmx metric
 type JMXMetricAttribute struct {
 	Name  string
-	Value float64
+	Value interface{}
 }
 
 // JMXMetric represents the top level jmx metric.
@@ -216,8 +216,13 @@ func getMetric(metricName string) (*JMXMetric, error) {
 func sendJMXMetric(client *dogstatsd.Client, metricCatagory string, attribute JMXMetricAttribute) {
 	_, ok := datadogMetrics[attribute.Name]
 	if ok {
-		datadogLabel := fmt.Sprintf("data.presto.%s.%s", metricCatagory, attribute.Name)
-		client.Gauge(datadogLabel, attribute.Value, nil, 1.0)
+		switch val := attribute.Value.(type) {
+		case float64:
+			datadogLabel := fmt.Sprintf("data.presto.%s.%s", metricCatagory, attribute.Name)
+			client.Gauge(datadogLabel, val, nil, 1.0)
+		default:
+			log.Println("skipping attribute %q: cannot handle value %v type %T", attribute.Name, val, val)
+		}
 	}
 }
 
