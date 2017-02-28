@@ -221,7 +221,7 @@ func sendJMXMetric(client *dogstatsd.Client, metricCatagory string, attribute JM
 			datadogLabel := fmt.Sprintf("data.presto.%s.%s", metricCatagory, attribute.Name)
 			client.Gauge(datadogLabel, val, nil, 1.0)
 		default:
-			log.Println("skipping attribute %q: cannot handle value %v type %T", attribute.Name, val, val)
+			log.Printf("skipping attribute %q: cannot handle value %v type %T", attribute.Name, val, val)
 		}
 	}
 }
